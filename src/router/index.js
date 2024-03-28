@@ -3,7 +3,15 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeComponent from '../views/Home.vue';
 import LoginComponent from '../views/Login.vue';
 import RegisterComponent from '../views/Register.vue';
+import ActivityComponent from '../views/Activity.vue';
+import NotFoundComponent from '../views/404Component.vue';
+import ActivityInfoComponent from '../views/ActivityInfo.vue'
 import ProfileComponent from '../components/userComponents/Profile.vue';
+import ClubComponent from '../views/Club.vue';
+import OfferComponent from '../views/Offer.vue';
+import BlogComponent from '../views/Blog.vue';
+import PlanningComponent from '../views/Planning';
+import CareZoneComponent from '../views/CareZone';
 import AuthService from '../services/AuthService';
 
 const routes = [
@@ -20,9 +28,43 @@ const routes = [
     component: RegisterComponent
   },
   {
+    path: '/offers',
+    component: OfferComponent
+  },
+  {
+    path: '/planning',
+    component: PlanningComponent
+  },
+  {
+    path: '/carezone',
+    component: CareZoneComponent
+  },
+  {
+    path: '/blogs',
+    component: BlogComponent
+  },
+  {
     path: '/profile',
     component: ProfileComponent,
     meta: { requiresAuth: true } // AuthGuard
+  },
+  {
+    path: '/clubs',
+    component: ClubComponent,
+  },
+  {
+    path: '/activities',
+    component: ActivityComponent,
+    //meta: { requiresAuth: true } // AuthGuard
+  },
+  {
+    path: '/activities/:title', // Définissez le paramètre de l'ID dans l'URL
+    component: ActivityInfoComponent // Utilisez le composant ActivityDetailComponent pour cette route
+  },
+
+  {
+    path: '/:pathMatch(.*)*',//Corriger
+    component: NotFoundComponent,
   }
 ];
 
