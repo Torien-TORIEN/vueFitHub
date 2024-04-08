@@ -11,7 +11,7 @@
             
             <div class="col-sm-7" >
               
-              <img src="@/assets/workout.jpg" alt="Workout" class="img-fluid">
+              <img v-if="activity != null" :src="getImagePath(activity.category)" :alt="activity.category" class="img-fluid" >
               <div class="blur-gradient"></div>
             </div>
 
@@ -109,9 +109,19 @@ export default {
 
         onMounted(getActivity);
 
+         //retoune l'url de l'image dans l'assets selon la categorie d'activité
+        function getImagePath(category) {
+          try{
+              return require(`@/assets/${category}.jpg`);
+          }catch(error){
+              return require(`@/assets/workout.jpg`);
+          }
+        }
+
         return {
             activity,
             getActivity,
+            getImagePath
         };
     },
 };

@@ -26,4 +26,10 @@
     npm install axios
 
 
-##
+### Installer Component calendar 
+    npm install --save @fullcalendar/vue @fullcalendar/daygrid --force
+    npm install v-calendar --force
+
+### Installer SweetAlert
+    npm install sweetalert2
+

@@ -1,51 +1,138 @@
 import axios from 'axios';
+const apiUrl = process.env.API_URL; // Importez la variable API_URL de votre fichier .env
+const token = localStorage.getItem('token');
 
 class UserService {
-  async getUserProfile() {
-    const token = localStorage.getItem('token');
+  async getUserById(id ) {
     if (!token) {
       throw new Error('No token found');
     }
-
-    const response = await axios.get('http://localhost:3000/users', {
-      headers: {
-        Authorization: `Bearer ${token}`
+    try{
+      const response = await axios.get(`${apiUrl}/users/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data.data;//user
+    }catch(error){
+      if(error.response && error.response.data.error){
+        throw new Error(error.response.data.error);
+      }else{
+        throw new Error(error.message)
       }
-    });
-
-    return response.data;
+    }
   }
 
   async addUser(user) {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('No token found');
-    }
-
-    const response = await axios.post('http://localhost:3000/users/add', user, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
+    try{
+      if (!token) {
+        //throw new Error('No token found');
       }
-    });
-
-    return response.data;
+  
+      const response = await axios.post(`${apiUrl}/users`, user, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      });
+  
+      return response.data;
+    }catch(error){
+      if(error.response && error.response.data.error)
+        throw new Error(error.response.data.error)
+      else
+        throw new Error(error.message)
+    }
   }
 
   async updateUser(userId, userData) {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('No token found');
+    try{
+      if (!token) {
+        throw new Error('No token found');
+      }
+      const response = await axios.put(`${apiUrl}/users/update/${userId}`, userData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      //retourner user 
+      return response.data;
+
+    }catch(error){
+      if(error.response && error.response.data.error)
+        throw new Error(error.response.data.error)
+      else
+        throw new Error(error.message)
     }
 
-    const response = await axios.put(`http://localhost:3000/users/update/${userId}`, userData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
 
-    return response.data;
+
+  }
+
+  async addActivyToUser(activityId, userId){
+    try{
+      if (!token) {
+        //throw new Error('No token found');
+      }
+  
+      const response = await axios.put(`${apiUrl}/users/addactivity`, {activityId,userId},{
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      });
+  
+      return response.data;
+    }catch(error){
+      if(error.response && error.response.data.error)
+        throw new Error(error.response.data.error)
+      else
+        throw new Error(error.message)
+    }
+  }
+
+  async removeActivyFromUser(activityId, userId){
+    try{
+      if (!token) {
+        //throw new Error('No token found');
+      }
+  
+      const response = await axios.put(`${apiUrl}/users/removeactivity`, {activityId,userId},{
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      });
+  
+      return response.data;
+    }catch(error){
+      if(error.response && error.response.data.error)
+        throw new Error(error.response.data.error)
+      else
+        throw new Error(error.message)
+    }
+  }
+
+  async getActivitiesByUser(userId){
+    if (!token) {
+      throw new Error('You are not connected !');
+    }
+    try{
+      const response = await axios.get(`${apiUrl}/users/activities/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data.data;//activities
+    }catch(error){
+      if(error.response && error.response.data.error){
+        throw new Error(error.response.data.error);
+      }else{
+        throw new Error(error.message)
+      }
+    }
   }
 
   // Autres requêtes utilisateur...

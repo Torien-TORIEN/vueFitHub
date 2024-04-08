@@ -20,10 +20,10 @@
           <a href="" class="me-4 text-reset">
             <i class="fab fa-instagram"></i>
           </a>
-          <a href="" class="me-4 text-reset">
+          <a href="https://www.linkedin.com/in/torien/"  target="blank" class="me-4 text-reset">
             <i class="fab fa-linkedin"></i>
           </a>
-          <a href="" class="me-4 text-reset">
+          <a href="https://github.com/Torien-TORIEN/" target="blank" class="me-4 text-reset">
             <i class="fab fa-github"></i>
           </a>
         </div>
@@ -40,23 +40,11 @@
             <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
               <!-- Content -->
               <h6 class="text-uppercase fw-bold mb-4">
-                <i class="fas fa-gem me-3"></i>Polytech Angers
+                <i class="fas fa-gem me-3"></i>FIT HUB 
               </h6>
               <p>
-                Here you can use rows and columns to organize your footer content. Lorem ipsum
-                dolor sit amet, consectetur adipisicing elit.
-              </p>
-            </div>
-            <!-- Grid column -->
-    
-            <!-- Grid column -->
-            <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
-              <!-- Links -->
-              <h6 class="text-uppercase fw-bold mb-4">
-                Products
-              </h6>
-              <p>
-                <a href="#!" class="text-reset">Angular</a>
+                Fit Hub is a website for the gym that offers many activities.
+                 This site is developed as part of the 2023-2024 project by Mr. Torien, Miss Siwar, and Miss Nour.
               </p>
             </div>
             <!-- Grid column -->
@@ -65,19 +53,16 @@
             <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
               <!-- Links -->
               <h6 class="text-uppercase fw-bold mb-4">
-                Useful links
+                Pages
               </h6>
               <p>
-                <a href="#!" class="text-reset">Home</a>
+                <router-link to="/" class="text-reset">Home</router-link >
               </p>
               <p>
-                <a href="#!" class="text-reset">Activities</a>
+                <router-link to="/activities" class="text-reset">Activities</router-link >
               </p>
               <p>
-                <a href="#!" class="text-reset">Clubs</a>
-              </p>
-              <p>
-                <a href="#!" class="text-reset">Offers</a>
+                <router-link  to="/offers" class="text-reset">Offers</router-link >
               </p>
             </div>
             <!-- Grid column -->
@@ -89,9 +74,9 @@
               <p><i class="fas fa-home me-3"></i> Angers, 49000, FR</p>
               <p>
                 <i class="fas fa-envelope me-3"></i>
-                monemail@example.com
+                torien1227@gmail.com
               </p>
-              <p><i class="fas fa-phone me-3"></i> + 01 234 567 88</p>
+              <p><i class="fas fa-phone me-3"></i> + 00 00 00 00 00 </p>
             </div>
             <!-- Grid column -->
           </div>

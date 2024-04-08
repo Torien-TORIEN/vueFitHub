@@ -6,7 +6,7 @@ import RegisterComponent from '../views/Register.vue';
 import ActivityComponent from '../views/Activity.vue';
 import NotFoundComponent from '../views/404Component.vue';
 import ActivityInfoComponent from '../views/ActivityInfo.vue'
-import ProfileComponent from '../components/userComponents/Profile.vue';
+import ProfileComponent from '../views/Profile.vue';
 import ClubComponent from '../views/Club.vue';
 import OfferComponent from '../views/Offer.vue';
 import BlogComponent from '../views/Blog.vue';
@@ -77,7 +77,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!AuthService.isAuthenticated()) {
-      next({ path: '/login' });
+      next({ path: '/' });
     } else {
       next();
     }

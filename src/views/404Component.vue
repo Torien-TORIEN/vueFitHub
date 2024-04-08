@@ -57,5 +57,8 @@
     color: inherit; /* Assure que le lien a la même couleur que le texte parent */
   }
 
+  .content{
+    padding-bottom: 100px;
+  }
   </style>
   

@@ -8,7 +8,7 @@
             <h1 class="text-center">Activities</h1> <!-- Ajout de la classe text-center pour centrer horizontalement -->
             <h5 class="text-center"><router-link to="/"> Home</router-link> > activities</h5> <!-- Ajout de la classe text-center pour centrer horizontalement -->
              <!-- Button to Open Modal -->
-             <button type="button" class="btn btn-primary" style="border-radius: 20px;" @click="showModal = true">Add an activity</button>
+             <button type="button" class="btn btn-primary" style="border-radius: 20px;" @click="showModal = true" v-if="isAdmin()">Add an activity</button>
           </div>
           <div class="col-sm-6 position-relative">
             <!-- Insérer ici votre image de fond -->
@@ -49,6 +49,13 @@
                       </div>
                     </div>
 
+                    <!-- Image -->
+                    <div class="form-group row">
+                      <label for="title" class="col-sm-3 col-form-label label-form">Image :</label>
+                      <div class="col-sm-9">
+                        <input type="file" id="activity_image_id" accept="image/*" style="display: block" ref="image" @change="selectActivityImage">
+                      </div>
+                    </div>
                     <!-- Intensity -->
                     <div class="form-group row">
                       <label for="intensity" class="col-sm-3 col-form-label label-form">Intensity :</label>
@@ -264,10 +271,15 @@
          <!-- Modal Footer -->
         <div class="modal-footer bg-gris position-relative">
             <!-- Buttons -->
-            <div class="container-fluid btn-group-modal">
+            <div class="container-fluid btn-group-modal" v-if="!isUpdating">
                 <button type="button" class="btn btn-success btn-modal" @click="createActivity" style="border-radius: 20px; width: 100px;" >Add </button>
                 <button type="button" class="btn btn-primary btn-modal" @click="resetModal" style="border-radius: 20px; width: 100px;" >Reset </button>
                 <button type="button" class="btn btn-danger btn-modal" @click="closeModal" style="border-radius: 20px; width: 100px;" >Close</button>
+            </div>
+            <!-- Buttons Update -->
+            <div class="container-fluid btn-group-modal" v-if="isUpdating">
+                <button type="button" class="btn btn-success btn-modal" @click="updateActivity" style="border-radius: 20px; width: 100px;" >Update </button>
+                <button type="button" class="btn btn-danger btn-modal" @click="closeModal" style="border-radius: 20px; width: 100px;" >Cancel</button>
             </div>
         </div>
 
@@ -369,7 +381,7 @@
               <div class="row">
                   
                 <!-- Exemple d'activité -->
-                <ActivityCardComponent v-for="activity in activities" :key="activity._id" :Activity="activity" @activityDeleted="fetchData"/>
+                <ActivityCardComponent v-for="activity in activities" :key="activity._id" :Activity="activity" @activityDeleted="fetchData" @show-update-modal="showUpdateModal"/>
                 
               </div>
             </div>
@@ -405,6 +417,8 @@
   import ActivityCardComponent from '../components/activityComponents/ActivityCardComponent.vue';
   import activityService from '../services/activityService';
   import { ref, computed, onMounted } from 'vue';
+  import AuthService from '@/services/AuthService';
+  import Swal from 'sweetalert2';
 
   export default {
     name: "ActivityComponent",
@@ -415,7 +429,8 @@
       const showCategories = ref(false);
       const showObjectif = ref(false);
       const showPourQui = ref(false);
-      const activitiesPerPage = 9;
+      const isUpdating =ref(false);
+      const activitiesPerPage = 6;
       const currentPage = ref(1);
       const activities = ref([]); // Initialiser avec un tableau vide
       const selectedFilters = ref({
@@ -423,8 +438,10 @@
         goals: [],
         ageGroup: []
       });
+      const UserConnected=ref(null);
       const selectedModals = ref({
         title:"",
+        image:"",
         duration:"",
         intensity:"",
         sportswear:"",
@@ -519,6 +536,7 @@
 
             //Save
             const res = await activityService.createActivity(selectedModals.value);
+            //console.log("saving :",selectedModals.value)
 
             //Reset Modal Value
             resetModal();
@@ -529,10 +547,25 @@
             //Close Modal
             closeModal();
 
-            console.log("Create Activity",res.data)
+            //console.log("Create Activity",res.data)
+            Swal.fire({
+                  title: 'Created !',
+                  text: 'Activity '+ res.data.title +' has been added.',
+                  icon: 'success',
+                  timer: 2000, 
+                  showConfirmButton: false,
+                  timerProgressBar: true
+              });
           }
           } catch (error) {
-            console.error('Failed to filter activities:', error);
+            //console.error('Failed to filter activities:', error);
+            Swal.fire({
+                  title: 'Oups !',
+                  text: 'Failed : '+ error.message,
+                  icon: 'error',
+                  timer: 2000, 
+                  showConfirmButton: true, 
+              });
           }
 
       }
@@ -542,6 +575,7 @@
         modalValidator.value.error = "";
         selectedModals.value = {
           title:"",
+          image:"",
           duration:"",
           intensity:"",
           sportswear:"",
@@ -603,8 +637,9 @@
 
       function closeModal() {
         showModal.value = false;
+        isUpdating.value=false;
         closeListModal();
-        console.log("selectedModals :",selectedModals)
+        resetModal()
       }
 
       function toggleCategoriesModal() {
@@ -634,6 +669,11 @@
           if(selectedModals.value.title.trim().length < 2){
               modalValidator.value.error = "Title field is required";
           }
+          // Vérification de la taille de l'image
+          else if (selectedModals.value.image && document.getElementById("activity_image_id").files[0] && document.getElementById("activity_image_id").files[0].size > 60 * 1024) { // Convertir 100KB en octets
+              modalValidator.value.error = "Image size should not exceed 60KB";
+          }
+    
           // Vérification de l'intensité
           else if(selectedModals.value.intensity.trim().length < 2){
               modalValidator.value.error = "Intensity field is required";
@@ -692,6 +732,91 @@
           }
       }
 
+      //retourner user ds localstorage
+      function getCurrentUserConnected(){
+            try{
+                const user=AuthService.getConnectedUser();
+                UserConnected.value = user;
+            }catch(error){
+                UserConnected.value=null;
+            }
+        }
+
+      function isAdmin(){
+        getCurrentUserConnected();
+        return (UserConnected.value && (UserConnected.value.role== 'SUPER_ADMIN' || UserConnected.value.role== 'ADMIN'));
+      }
+
+      //Select Image and Convert It in base64
+      function selectActivityImage(event) {
+        const file = event.target.files[0]; // Récupérer le fichier sélectionné
+        const reader = new FileReader(); // Créer un objet FileReader pour lire le contenu du fichier
+
+        reader.onload = (event) => {
+            const imageData = event.target.result; // Récupérer les données de l'image en base64
+            selectedModals.value.image = imageData; // Affecter les données de l'image à selectedModals.value.image
+            //console.log("Image : ",selectedModals.value.image)
+        };
+
+        // Lire le contenu du fichier en tant que base64
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+        else{//Aucun image selectionné
+          selectedModals.value.image=""
+        }
+      }
+
+
+      //Updating Activity
+      function showUpdateModal(Activity){
+        selectedModals.value=Activity;
+        //console.log("Modal : ",selectedModals.value._id)
+        showModal.value=true;
+        isUpdating.value=true
+      }
+
+      async function updateActivity(){
+        try {
+          validateFormModal();
+          if(modalValidator.value.isValid){
+            const id =selectedModals.value._id
+            var Activity_to_update =selectedModals.value;
+            delete Activity_to_update._id;
+
+            //console.log(Activity_to_update);
+            //update
+            const res = await activityService.updateActivity(id, Activity_to_update);
+
+            //Fetch data
+            fetchData();
+
+            //Close Modal
+            closeModal();
+
+            //console.log("Create Activity",res.data)
+            Swal.fire({
+                  title: 'Updated !',
+                  text: 'Activity '+ res.data.title +' has been updated.',
+                  icon: 'success',
+                  timer: 2000, 
+                  showConfirmButton: false,
+                  timerProgressBar: true
+              });
+          }
+          } catch (error) {
+            //console.error('Failed to filter activities:', error);
+            Swal.fire({
+                  title: 'Oups !',
+                  text: 'Failed : '+ error.message,
+                  icon: 'error',
+                  timer: 2000, 
+                  showConfirmButton: true, 
+              });
+          }
+      }
+
+
 
       return {
         showCategories,
@@ -730,7 +855,20 @@
         modalValidator,
         validateFormModal,
         closeListModal,
-        fetchData
+        fetchData,
+
+        //UserConnected
+        UserConnected,
+        isAdmin,
+        getCurrentUserConnected,
+
+        //Image
+        selectActivityImage,
+
+        //Update Modal
+        showUpdateModal,
+        updateActivity,
+        isUpdating
 
       };
     }

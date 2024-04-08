@@ -75,8 +75,31 @@ class ActivityService {
       });
       return response.data;
     } catch (error) {
-      // Gérez les erreurs ici
-      throw new Error('Failed to Create an activity:', error);
+      if(error.response && error.response.data.error)
+        throw new Error(error.response.data.error)
+      else
+        throw new Error(error.message)
+    }
+  }
+
+  async updateActivity(id,activity) {
+    try {
+      if (!token) {
+        // Gérez l'absence de jeton d'authentification ici
+      }
+
+      const response = await axios.put(`${apiUrl}/activities/update/${id}`, activity, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if(error.response && error.response.data.error)
+        throw new Error(error.response.data.error)
+      else
+        throw new Error(error.message)
     }
   }
 
