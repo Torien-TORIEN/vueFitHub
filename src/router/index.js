@@ -12,6 +12,8 @@ import OfferComponent from '../views/Offer.vue';
 import BlogComponent from '../views/Blog.vue';
 import PlanningComponent from '../views/Planning';
 import CareZoneComponent from '../views/CareZone';
+import ResetPassword from '../views/ResetPassword';
+import UserListComponent from '../components/userComponents/UserListComponent.vue'
 import AuthService from '../services/AuthService';
 
 const routes = [
@@ -49,8 +51,18 @@ const routes = [
     meta: { requiresAuth: true } // AuthGuard
   },
   {
+    path: '/reset-password/:pwd(.*)',
+    component: ResetPassword,
+    props: true // Activer le passage des paramètres d'URL en tant que props au composant
+  },
+
+  {
     path: '/clubs',
     component: ClubComponent,
+  },
+  {
+    path: '/users',
+    component: UserListComponent,
   },
   {
     path: '/activities',
@@ -60,6 +72,11 @@ const routes = [
   {
     path: '/activities/:title', // Définissez le paramètre de l'ID dans l'URL
     component: ActivityInfoComponent // Utilisez le composant ActivityDetailComponent pour cette route
+  },
+
+  {
+    path: '/PageNotFound',//Corriger
+    component: NotFoundComponent,
   },
 
   {

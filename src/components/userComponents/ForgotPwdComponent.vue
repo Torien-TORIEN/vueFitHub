@@ -58,11 +58,14 @@ export default {
             try{
                 if(checkEmail()){
                     const user = await AuthService.getUserByEmail(email.value);
-                    const URL="http://localhost:8081/";
+                    //const URL="http://localhost:8081/";
+                    const URL = window.location.origin; // Obtenez l'URL de base de l'application
                     if(user){
+                        const currentDate = new Date();
+                        const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
                         const mailOptions = {
                             to : email.value,
-                            subject : "FiT HuB: Reset Password",
+                            subject : `FiT HuB: Reset Password -  ${formattedDate}`,
                             text :"",
                             html : `
                                 <html>
@@ -95,6 +98,9 @@ export default {
                                 showConfirmButton: false, // Ne pas afficher le bouton de confirmation
                                 timerProgressBar:true,
                             });
+
+                            // show login modal 
+                            showLoginModal()
                         }else{
                             throw new Error("Something went wrong !")
                         }

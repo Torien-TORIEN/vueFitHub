@@ -1,6 +1,6 @@
 <template>
 
-    <footer class="text-center text-lg-start "  style="background-color:black;">
+    <footer class="text-center text-lg-start "  style="background-color:rgb(204, 195, 195);">
       <!-- Section: Social media -->
       <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
         <!-- Left -->

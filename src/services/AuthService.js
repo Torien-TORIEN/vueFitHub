@@ -151,6 +151,50 @@ class AuthService {
     }
   }
 
+  async getUserByPWD(hashPWD){
+    try{
+      // Effectuer la requête de connexion et récupérer la réponse
+      console.log(hashPWD)
+      const response = await axios.post(`${apiUrl}/users/hashpassword-user`,hashPWD ,{
+        headers: {
+        'Content-Type': 'application/json',
+        }
+      });
+
+      if( response.data && response.data.success){
+        return response.data.data;
+      }else{
+        throw new Error(response.data.error);
+      }
+      
+    }catch(error){
+      if( error.response && error.response.data.error)
+        throw new Error(error.response.data.error);
+      else
+        throw new Error(error.message);
+    }
+  }
+
+  async updateUserPassword(id,password){
+    try{
+      // Effectuer la requête de connexion et récupérer la réponse
+      const response = await axios.put(`${apiUrl}/users/update-password/${id}`, {password} ,{
+        headers: {
+        'Content-Type': 'application/json',
+        }
+      });
+
+      return response.data;
+      
+    }catch(error){
+      if( error.response && error.response.data.error)
+        throw new Error(error.response.data.error);
+      else
+        throw new Error(error.message);
+    }
+  }
+
+
   
 
 }

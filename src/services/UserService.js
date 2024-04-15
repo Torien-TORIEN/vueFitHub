@@ -135,6 +135,68 @@ class UserService {
     }
   }
 
+  async getAllUsers() {
+    if (!token) {
+      //throw new Error('No token found');
+    }
+    try{
+      const response = await axios.get(`${apiUrl}/users`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      if(response.data && response.data.data)
+        return response.data.data;// data ici c'est le json reçue
+    }catch(err){
+      throw new Error(err.message)
+    }
+    
+  }
+
+  async deleteUser(userId){
+    if (!token) {
+      throw new Error('You are not connected !');
+    }
+    try{
+      const response = await axios.delete(`${apiUrl}/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data.data;//users
+    }catch(error){
+      if(error.response && error.response.data.error){
+        throw new Error(error.response.data.error);
+      }else{
+        throw new Error(error.message)
+      }
+    }
+  }
+
+
+  async deactivateUserAccount(userId){
+    if (!token) {
+      throw new Error('You are not connected !');
+    }
+    try{
+      const response = await axios.put(`${apiUrl}/users/deactivate/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data.data;//user
+    }catch(error){
+      if(error.response && error.response.data.error){
+        throw new Error(error.response.data.error);
+      }else{
+        throw new Error(error.message)
+      }
+    }
+  }
+  
+
+
+  
   // Autres requêtes utilisateur...
 }
 
